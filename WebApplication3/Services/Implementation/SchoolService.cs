@@ -18,10 +18,7 @@ namespace WebApplication3.Services.Implementation
         {
             _dbContext = dbContext;
             _mapper = mapper;
-            
         }
-
-      
 
         public async Task<ResponseModel<SchoolCreateDTO>> CreateSchool(SchoolCreateDTO schoolCreateDTO)
         {
@@ -223,8 +220,6 @@ namespace WebApplication3.Services.Implementation
                             StatusCode = 400
                         };
                     }
-
-
                 }
                 else
                 {

@@ -1,4 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
+using Serilog.Sinks.MSSqlServer;
+using System.Collections.ObjectModel;
+using System.Data;
 using WebApplication3;
 using WebApplication3.AutoMapper;
 using WebApplication3.IRepositories;
@@ -37,6 +44,32 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+
+Logger? log = new LoggerConfiguration()
+    .WriteTo.Console(LogEventLevel.Debug)
+    .WriteTo.File("Logs/myJsonLogs.json")
+    .WriteTo.File("Logs/mylogs.txt", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .WriteTo.MSSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sinkOptions: new MSSqlServerSinkOptions
+    {
+        TableName = "MySeriLog",
+        AutoCreateSqlTable = true
+    },
+null, null, LogEventLevel.Warning, null,
+columnOptions: new ColumnOptions
+{
+    AdditionalColumns = new Collection<SqlColumn>
+    {
+            new SqlColumn(columnName:"User_Id", SqlDbType.NVarChar)
+    }
+},
+ null, null
+ )
+.Enrich.FromLogContext()
+.MinimumLevel.Information()
+.CreateLogger();
+
+Log.Logger = log;
+builder.Host.UseSerilog(log);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

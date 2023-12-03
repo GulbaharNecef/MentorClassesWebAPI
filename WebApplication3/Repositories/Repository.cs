@@ -22,7 +22,7 @@ namespace WebApplication3.Repositories
             return info.State == EntityState.Added;
         }
 
-        public IQueryable<T> GetAll()
+        public  IQueryable<T> GetAll()
         {
            return Table.AsQueryable();
         }

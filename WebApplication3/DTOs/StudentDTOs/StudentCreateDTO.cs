@@ -6,7 +6,8 @@ namespace WebApplication3.DTOs.StudentDTOs
     {
         public string LastName { get; set; }
         public string FirstName { get; set; }
-        
+        public int SchoolId { get; set; }
+
 
     }
 }

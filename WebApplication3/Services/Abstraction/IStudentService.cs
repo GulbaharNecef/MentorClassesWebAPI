@@ -8,11 +8,11 @@ namespace WebApplication3.Services.Abstraction
     {
         public Task<ResponseModel<List<StudentGetDTO>>> GetAllStudents();
         public Task<ResponseModel<StudentGetDTO>> GetStudentById(int id);
-        public Task<ResponseModel<StudentCreateDTO>> CreateStudent(StudentCreateDTO studentCreateDTO,int schoolId);
+        public Task<ResponseModel<StudentCreateDTO>> CreateStudent(StudentCreateDTO studentCreateDTO);
 
-        public Task<ResponseModel<StudentUpdateDTO>> UpdateStudent(StudentUpdateDTO studentUpdateDTO);
+        public Task<ResponseModel<StudentUpdateDTO>> UpdateStudent(StudentUpdateDTO studentUpdateDTO, int id);
         public Task<ResponseModel<bool>> DeleteStudent(int id);
-        public Task<Student> GetStudentId(int id);
         public Task<ResponseModel<bool>> ChangeSchool(int studentId, int newSchoolId );
+        public Task<ResponseModel<List<StudentGetDTO>>> GetStudentsBySchoolId(int schoolId);
     }
 }

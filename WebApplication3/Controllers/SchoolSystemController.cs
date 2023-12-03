@@ -14,31 +14,39 @@ namespace WebApplication3.Controllers
         {
             _schoolService = schoolService;
         }
-        [HttpGet]
-        public async Task<ActionResult<ResponseModel<List<SchoolGetDTO>>>> GetAllSchools()
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetAllSchools()
         {
-            try
-            {
-                var response = await _schoolService.GetAllSchool();
-                if (response.StatusCode == 200)
-                {
-                    return Ok(response);
-                }
-                else
-                {
-                    return BadRequest(response);
-                }
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(500, new ResponseModel<List<SchoolGetDTO>>
-                {
-                    Data = null,
-                    StatusCode = 500,
-                });
-            }
-           
+            var data = await _schoolService.GetAllSchool();
+            return StatusCode(data.StatusCode, data);
+        }
 
+        [HttpPut("[action]")]
+        public async Task<ActionResult> UpdateSchool(SchoolUpdateDTO schoolUpdateDTO)
+        {
+            var data = await _schoolService.UpdateSchool(schoolUpdateDTO);
+            return StatusCode(data.StatusCode, data);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetSchoolById([FromQuery]int id)
+        {
+            var data = await _schoolService.GetSchoolById(id);
+            return StatusCode(data.StatusCode, data);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult> CreateSchool([FromBody]SchoolCreateDTO schoolCreateDTO)
+        {
+            var data = await _schoolService.CreateSchool(schoolCreateDTO);
+            return StatusCode(data.StatusCode, data);
+        }
+
+        [HttpDelete("[action]")]
+        public async Task<ActionResult> DeleteSchool(int id)
+        {
+            var data = await _schoolService.DeleteSchool(id);
+            return StatusCode(data.StatusCode, data);
         }
     }
 }

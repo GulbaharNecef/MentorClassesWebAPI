@@ -24,6 +24,8 @@ namespace WebApplication3
                 .HasForeignKey(s=>s.SchoolId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(NewDbContext).Assembly);
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
