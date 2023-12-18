@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using WebApplication3.Auth;
 using WebApplication3.Entities;
 
 namespace WebApplication3
 {
-    public class NewDbContext : DbContext
+    public class NewDbContext : IdentityDbContext<AppUser, AppRole, string>
     {
         
         public NewDbContext(DbContextOptions options) : base(options)

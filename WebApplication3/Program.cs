@@ -1,12 +1,16 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
+using System;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Security.Principal;
 using WebApplication3;
+using WebApplication3.Auth;
 using WebApplication3.AutoMapper;
 using WebApplication3.IRepositories;
 using WebApplication3.IRepositories.ISchoolRepos;
@@ -43,6 +47,23 @@ builder.Services.AddScoped<ISchoolService, SchoolService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// identity
+builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<NewDbContext>().AddDefaultTokenProviders();
+
+builder.Services.AddScoped<IRoleService, RoleService>();
+
+
+//logger ile loglama
+/*builder.Services.AddLogging(i =>
+{
+    i.ClearProviders();
+    i.SetMinimumLevel(LogLevel.Information);
+    i.AddConsole();
+    i.AddDebug();
+    //i.AddProvider(MyCustomProvider());
+}
+) ;*/
 
 
 Logger? log = new LoggerConfiguration()

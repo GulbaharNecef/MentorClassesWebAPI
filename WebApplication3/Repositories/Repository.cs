@@ -40,7 +40,7 @@ namespace WebApplication3.Repositories
         //    //var data1 = Table.AsQueryable();
         //    //return await data1.FirstOrDefaultAsync(x => x.Id == id);
         //}
-
+            
         public bool Remove(T data)
         {
             EntityEntry<T> info = Table.Remove(data);
