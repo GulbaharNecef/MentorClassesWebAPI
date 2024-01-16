@@ -6,7 +6,7 @@ namespace WebApplication3.Services.Abstraction
 {
     public interface IUserService
     {
-        Task<ResponseModel<CreateUserDTO>> CreateAsync(CreateUserDTO model);
+        Task<ResponseModel<CreateUserResponseDTO>> CreateAsync(CreateUserDTO model);
         Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accessTokenDate);
         public Task UpdatePasswordAsync(string userId, string resetToken, string newPassword);
 

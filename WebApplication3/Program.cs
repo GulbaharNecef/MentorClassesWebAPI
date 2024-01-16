@@ -53,6 +53,7 @@ builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<NewDbC
 
 builder.Services.AddScoped<IRoleService, RoleService>();
 
+builder.Services.AddScoped<IUserService, UserService>();
 
 //logger ile loglama
 /*builder.Services.AddLogging(i =>
