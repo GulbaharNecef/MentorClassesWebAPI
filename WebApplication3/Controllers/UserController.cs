@@ -40,5 +40,17 @@ namespace WebApplication3.Controllers
             var data = await _userService.AssignRoleToUserAsnyc(userId, roles);
             return StatusCode(data.StatusCode, data);
         }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser(string userIdOrName)
+        {
+            var data = await _userService.DeleteUserAsync(userIdOrName);
+            return StatusCode(data.StatusCode, data);
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser(UserUpdateDTO model)
+        {
+            var data = await _userService.UpdateUserAsync(model);
+            return StatusCode(data.StatusCode, data);
+        }
     }
 }

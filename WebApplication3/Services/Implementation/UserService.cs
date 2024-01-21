@@ -26,7 +26,7 @@ namespace WebApplication3.Services.Implementation
             {
                 Data = false,
                 StatusCode = 400
-        };
+            };
 
             var user = await _user_manager.FindByIdAsync(userId);
             try
@@ -84,9 +84,34 @@ namespace WebApplication3.Services.Implementation
             return responseModel;
         }
 
-        public Task<ResponseModel<bool>> DeleteUserAsync(string userIdOrName)
+        public async Task<ResponseModel<bool>> DeleteUserAsync(string userIdOrName)
         {
-            throw new NotImplementedException();
+            ResponseModel<bool> response = new()
+            {
+                Data = false,
+                StatusCode = 400
+            };
+            var user = await _user_manager.FindByNameAsync(userIdOrName);
+            if(user == null)
+            {
+                user = await _user_manager.FindByIdAsync(userIdOrName);
+            }
+            try
+            {
+                if (user != null)
+                {
+                    await _user_manager.DeleteAsync(user);
+                    response.Data = true;
+                    response.StatusCode = 200;
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message + ex.InnerException);
+                Console.WriteLine(ex.Message);
+            }
+            return response;
         }
 
         public async Task<ResponseModel<List<UserGetDTO>>> GetAllUsersAsync()
@@ -117,7 +142,7 @@ namespace WebApplication3.Services.Implementation
             
         }
 
-        public async  Task<ResponseModel<string[]>> GetRolesToUserAsync(string userIdOrName)
+        public async  Task<ResponseModel<string[]>> GetRolesToUserAsync(string userIdOrName)//userin rollarin tapir
         {
             ResponseModel<string[]> responseModel = new ResponseModel<string[]>()
             {
@@ -134,7 +159,7 @@ namespace WebApplication3.Services.Implementation
             {
                 if(user != null)
                 {
-                    var userRole =await _user_manager.GetRolesAsync(user);
+                    var userRole = await _user_manager.GetRolesAsync(user);
                     responseModel.Data = userRole.ToArray();
                     responseModel.StatusCode = 200;
                     return responseModel;
@@ -158,9 +183,38 @@ namespace WebApplication3.Services.Implementation
             throw new NotImplementedException();
         }
 
-        public Task<ResponseModel<bool>> UpdateUserAsync(UserUpdateDTO model)
+        public async Task<ResponseModel<bool>> UpdateUserAsync(UserUpdateDTO model)
         {
-            throw new NotImplementedException();
+            ResponseModel<bool> response = new()
+            {
+                Data = false,
+                StatusCode = 400
+            };
+            var user = await _user_manager.FindByNameAsync(model.UserName);
+            if(user == null)
+            {
+                user = await _user_manager.FindByIdAsync(model.UserId);              
+            }
+            try
+            {
+                if(user != null)
+                {
+                    user.UserName = model.UserName;
+                    user.Email = model.Email;
+                    user.FirstName = model.FirstName;
+                    user.LastName = model.LastName;
+                    await _user_manager.UpdateAsync(user);
+                    response.Data = true;
+                    response.StatusCode = 200;
+                    return response;
+                }
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex.Message + ex.InnerException);
+                Console.WriteLine(ex.Message); 
+            }
+            return response;
         }
     }
 }

@@ -8,8 +8,8 @@ namespace WebApplication3.Services.Abstraction
         Task<ResponseModel<TokenDTO>> LoginAsync(string userNameOrEmail, string password);
         Task<ResponseModel<TokenDTO>> LoginWithRefreshTokenAsync(string refreshToken);
         Task<ResponseModel<bool>> LogOut(string userNameOrEmail);
-
-        public Task<string> PasswordResetAsnyc(string email);
-        public Task<bool> VerifyResetTokenAsync(string resetToken, string userId);
+        
+        //public Task<string> PasswordResetAsnyc(string email);
+        //public Task<bool> VerifyResetTokenAsync(string resetToken, string userId);
     }
 }
