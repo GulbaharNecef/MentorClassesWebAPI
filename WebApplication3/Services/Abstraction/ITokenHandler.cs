@@ -5,7 +5,7 @@ namespace WebApplication3.Services.Abstraction
 {
     public interface ITokenHandler
     {
-        Task<TokenDTO> GetTokenAsync(AppUser appUser);
-        string GetRefreshTokenAsync();
+        Task<TokenDTO> CreateAccessTokenAsync(AppUser appUser);
+        string CreateRefreshToken();
     }
 }

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Collections.Generic;
+using System.Text;
 using WebApplication3.Auth;
 using WebApplication3.DTOs;
 using WebApplication3.Model;
@@ -173,14 +175,40 @@ namespace WebApplication3.Services.Implementation
             return responseModel;
         }
 
-        public Task UpdatePasswordAsync(string userId, string resetToken, string newPassword)
+        //bunu basa dusmedim
+        public async Task UpdatePasswordAsync(string userId, string resetToken, string newPassword)
         {
-            throw new NotImplementedException();
-        }
+            AppUser user = await _user_manager.FindByIdAsync(userId);
 
-        public Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accessTokenDate)
-        {
-            throw new NotImplementedException();
+            if(user is not null)
+            {
+                byte[] tokenBytes = WebEncoders.Base64UrlDecode(resetToken);
+                resetToken = Encoding.UTF8.GetString(tokenBytes);
+
+                IdentityResult result = await _user_manager.ResetPasswordAsync(user, resetToken, newPassword);
+                if(result.Succeeded)
+                {
+                    await _user_manager.UpdateSecurityStampAsync(user);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
+        //bunu da tam basa dusmedim
+        public async Task UpdateRefreshToken(string refreshToken, AppUser user, DateTime accessTokenDate)
+        {//bu authoService de olmalidirmi?
+            if(user is not null)
+            {
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenEndTime = accessTokenDate.AddMinutes(10);
+                await _user_manager.UpdateAsync(user);
+            }
         }
 
         public async Task<ResponseModel<bool>> UpdateUserAsync(UserUpdateDTO model)

@@ -5,8 +5,8 @@
         
         public string LastName { get; set; }
         public string FirstName { get; set; }
-        public School School { get; set; }
-        public int SchoolId { get; set; }//navigation property, foreign key
+        public School School { get; set; }//navigation property
+        public int SchoolId { get; set; }// foreign key
 
     }
 }

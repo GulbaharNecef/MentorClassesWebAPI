@@ -5,7 +5,7 @@ namespace WebApplication3.IRepositories
 {
     public interface IRepository<T> where T: BaseEntity
     {
-        DbSet<T> Table { get; }
+        DbSet<T> Table { get; }//bu o demekdir ki Table adinda bir deyisken tanimlayiram ve onun tipi DbSet<T> dir, yeni o bir database tablesi dir bir class ve ya basqa bir sey deyil
         IQueryable<T> GetAll();
         Task<T> GetById(int id);
         Task<bool> AddAsync(T data);

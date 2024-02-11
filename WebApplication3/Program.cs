@@ -27,9 +27,11 @@ using WebApplication3.UnitOfWorks;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
 //String connection = @"Server=localhost;Database=YourDatabase;TrustServerCertificate=True;Trusted_Connection=True;";
+// Add services to the container.
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(swagger =>
@@ -38,7 +40,7 @@ builder.Services.AddSwaggerGen(swagger =>
     swagger.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "Restaurant Final API",
+        Title = "Mentor Classes API",
         Description = "ASP.NET Core 6 Web API"
     });
     // To Enable authorization using Swagger (JWT)  
@@ -72,10 +74,7 @@ builder.Services.AddDbContext<NewDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-//builder.Services.AddDbContext<NewDbContext>(option =>
-//{
-//    option.UseSqlServer(connection);
-//});
+
 builder.Services.AddScoped<ISchoolRepository, SchoolRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -93,6 +92,10 @@ builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<NewDbC
 builder.Services.AddScoped<IRoleService, RoleService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IAuthoService, AuthoService>();
+
+builder.Services.AddScoped<ITokenHandler, WebApplication3.Services.Implementation.TokenHandler>();
 
 builder.Services.AddAuthentication(options =>
 {

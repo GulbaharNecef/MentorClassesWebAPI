@@ -22,24 +22,28 @@ namespace WebApplication3.Services.Implementation
             _configuration = configuration;
 
         }
-        public string GetRefreshTokenAsync()
+        public string CreateRefreshToken()//bunun async olmasi icinde neyese tesir ede biler
         {
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]);
-            var tokenDescription = new SecurityTokenDescriptor
+            var key = Encoding.UTF8.GetBytes(_configuration["Token:SecretKey"]);//ASCII
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
-            var refreshToken = handler.CreateToken(tokenDescription);
+            var refreshToken = handler.CreateToken(tokenDescriptor);
             return handler.WriteToken(refreshToken);
         }
 
-        public async Task<TokenDTO> GetTokenAsync(AppUser appUser)
+        public async Task<TokenDTO> CreateAccessTokenAsync(AppUser appUser)
         {
-            TokenDTO tokenDTO = new TokenDTO();
-            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
-            SigningCredentials credentials = new SigningCredentials(key,SecurityAlgorithms.HmacSha256);
-            var claims = new List<Claim>
+            try
+            {
+                TokenDTO tokenDTO = new TokenDTO();
+                SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:SecretKey"]));
+
+                SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, appUser.FirstName),
                 new Claim(ClaimTypes.Email, appUser.Email),
@@ -47,32 +51,36 @@ namespace WebApplication3.Services.Implementation
 
             };
 
-            var roles = await _userManager.GetRolesAsync(appUser);
-            //foreach (var role in roles)
-            //{
-            //    claims.Add(new Claim(ClaimTypes.Role, role));
-            //}
-            claims.AddRange(roles.Select(x=>new Claim(ClaimTypes.Role, x)));
+                //Role verirem tokene
+                var roles = await _userManager.GetRolesAsync(appUser);
+                //foreach (var role in roles)
+                //{
+                //    claims.Add(new Claim(ClaimTypes.Role, role));
+                //}
+                claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-            tokenDTO.ExpirationTime = DateTime.UtcNow.AddMinutes(1);//configurasiyadan
+                tokenDTO.ExpirationTime = DateTime.UtcNow.AddMinutes(1);//configurasiyadan
 
-            JwtSecurityToken securityToken = new JwtSecurityToken(
-                audience: _configuration["Token:Audience"],
-                issuer: _configuration["Token:Issuer"],
-                expires:tokenDTO.ExpirationTime,
-                notBefore:DateTime.UtcNow,
-                signingCredentials: credentials,
-                claims:claims
-                );
+                JwtSecurityToken securityToken = new JwtSecurityToken(
+                    audience: _configuration["Token:Audience"],
+                    issuer: _configuration["Token:Issuer"],
+                    expires: tokenDTO.ExpirationTime,
+                    notBefore: DateTime.UtcNow,//islemeye baslayacagi vaxt
+                    signingCredentials: credentials,
+                    claims: claims
+                    );
 
-            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-            tokenDTO.Token = handler.WriteToken(securityToken);
-            tokenDTO.RefershToken = GetRefreshTokenAsync();
-            return tokenDTO;
-
+                //token yaradiriq
+                JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+                tokenDTO.Token = handler.WriteToken(securityToken);
+                tokenDTO.RefershToken =  CreateRefreshToken();
+                return tokenDTO;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
         }
-
-         
-
     }
 }
